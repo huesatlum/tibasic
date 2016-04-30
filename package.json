@@ -1,0 +1,24 @@
+{
+  "name": "tibasic",
+  "version": "0.1.0",
+  "description": "TI-BASIC interpreter written in JavaScript",
+  "main": "./src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/huesatlum/tibasic.git"
+  },
+  "keywords": [
+    "ti-basic",
+    "interpreter"
+  ],
+  "bin": "./bin/tibasic",
+  "license": "MIT",
+  "preferGlobal": true,
+  "bugs": {
+    "url": "https://github.com/huesatlum/tibasic/issues"
+  },
+  "homepage": "https://github.com/huesatlum/tibasic#readme"
+}

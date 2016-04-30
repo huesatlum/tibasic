@@ -1,0 +1,131 @@
+#!/usr/bin/env node
+
+var TiBasic = require('../src/index');
+var fs = require('fs');
+var readline = require('readline');
+
+var args = process.argv.slice(2);
+var options = {};
+
+var usage = [
+  '',
+  'Usage: tibasic [options] [-e <code> | <file>] [ans]',
+  '',
+  'Options:',
+  '  -e, --eval <code> Evaluate the code instead of using a file',
+  '  -d, --debug       Display debug information',
+  '  -a, --ascii       Treat tokens as their closest ASCII counterpart.',
+  '                    Some uncommon features will not work.',
+  '  -h, --help        Display this help information',
+  '  -l, --length      Output the number of tokens in the program',
+  '  -v, --version     Display the version of the TI-BASIC interpreter',
+  '  -x, --hex-in      Treat the input as a hexdump of the tokens',
+  '  -X, --hex-out     Convert the program to a hexdump of the tokens',
+  '',
+  '[ans] is a number that is the previously evaluated',
+  'expression. It is stored as the variable Ans',
+  'and can be used for easy inputting.'
+].join('\n');
+
+while (args[0] && args[0][0] === '-') {
+  var arg = args.shift();
+
+  // Allow for args like -ad for -a -d
+  if (arg[0] === '-' && arg[1] !== '-' && arg[2]) {
+    var newArgs = arg.slice(1).split('')
+      .map(function (letter) {
+        return '-' + letter;
+      });
+
+    args = newArgs.concat(args);
+    arg = args.shift();
+  }
+
+  switch (arg) {
+    case '-a':
+    case '--ascii':
+      options.ascii = true;
+      break;
+
+    case '-d':
+    case '--debug':
+      options.debug = true;
+      break;
+
+    case '-e':
+    case '--eval':
+      var code = args.shift();
+      if (!code) {
+        throw new Error(arg + ' <code> required');
+      }
+      options.code = code;
+      break;
+
+    case '-h':
+    case '--help':
+      console.log(usage);
+      process.exit(0);
+      break;
+
+    case '-l':
+    case '--length':
+      options.showLength = true;
+      break;
+
+    case '-v':
+    case '--version':
+      console.log(TiBasic.VERSION);
+      process.exit(0);
+      break;
+
+    case '-x':
+    case '--hex-in':
+      options.hexIn = true;
+      break;
+
+    case '-X':
+    case '--hex-out':
+      options.hexOut = true;
+      break;
+
+    default:
+      console.warn('Unrecognized command ' + arg + ' ignored');
+      break;
+  }
+}
+
+if (!options.code) {
+  if (args[0]) {
+    options.file = args.shift();
+  } else {
+    options.repl = true;
+  }
+}
+
+if (args[0]) {
+  options.ans = args.shift();
+}
+
+var rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+
+if (options.repl) {
+  rl.prompt();
+
+  rl.on('line', line => {
+    console.log('input:',line);
+
+    rl.prompt();
+  });
+} else {
+  if (options.file) {
+    options.code = fs.readFileSync(options.file, 'utf8');
+
+  }
+}
+
+console.log(options);
+
+process.exit(0);
