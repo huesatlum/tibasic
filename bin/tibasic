@@ -3,6 +3,7 @@
 var TiBasic = require('../src/index');
 var fs = require('fs');
 var readline = require('readline');
+var colors = require('colors');
 
 var args = process.argv.slice(2);
 var options = {};
@@ -31,7 +32,7 @@ while (args[0] && args[0][0] === '-') {
   var arg = args.shift();
 
   // Allow for args like -ad for -a -d
-  if (arg[0] === '-' && arg[1] !== '-' && arg[2]) {
+  if (arg[1] !== '-' && arg[2]) {
     var newArgs = arg.slice(1).split('')
       .map(function (letter) {
         return '-' + letter;
@@ -74,7 +75,7 @@ while (args[0] && args[0][0] === '-') {
 
     case '-v':
     case '--version':
-      console.log(TiBasic.VERSION);
+      console.log(require('../package.json').version);
       process.exit(0);
       break;
 
@@ -103,29 +104,51 @@ if (!options.code) {
 }
 
 if (args[0]) {
-  options.ans = args.shift();
+  TiBasic.ans = args.shift();
 }
 
-var rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
-});
+var rl = readline.createInterface(process.stdin, process.stdout);
+
+rl.setPrompt(':');
+
+TiBasic.getInput = function (prompt) {
+  var input;
+  rl.question(prompt, function (line) {
+    input = line;
+    return line
+  });
+}
+
+TiBasic.disp = console.log;
+
+TiBasic.getInput = function (prompt, callback) {
+  rl.question(prompt, function (line) {
+    callback(line);
+  });
+};
 
 if (options.repl) {
+  console.log('Interactive mode: Type exit to quit.');
+
   rl.prompt();
 
-  rl.on('line', line => {
-    console.log('input:',line);
+  rl.on('line', function (line) {
+    if (line === 'exit') {
+      return rl.close();
+    }
+
+    console.log(TiBasic.run(line));
 
     rl.prompt();
+  }).on('close', function () {
+    console.log('Closing...')
+    process.exit(0);
   });
 } else {
   if (options.file) {
     options.code = fs.readFileSync(options.file, 'utf8');
-
   }
+  console.log(options);
+
+  process.exit(0);
 }
-
-console.log(options);
-
-process.exit(0);

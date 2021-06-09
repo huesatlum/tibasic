@@ -9,13 +9,13 @@ It can be run online at [TODO] or locally, as shown below.
 ## Installation
 
 To run locally, you will need [Node.js](https://nodejs.org/) installed on your machine. If you have [git](https://git-scm.com/), you can use `clone` to easily set it up:
-```shell
+```
 $ git clone https://github.com/huesatlum/tibasic.git
 $ cd tibasic
 ```
 
-Next, you will want to install any necessary modules and add a [link](https://docs.npmjs.com/cli/link) to use it anywhere:
-```shell
+Next, you will want to install any necessary modules and add a [link](https://docs.npmjs.com/cli/link) to use it anywhere. (It will still work if you don't link it, but you have to run it only from the `tibasic` folder, and use `node tibasic` instead of `tibasic`.)
+```
 $ npm install
 $ npm link
 ```

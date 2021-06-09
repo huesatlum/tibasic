@@ -16,8 +16,15 @@
 
   TiBasic.VERSION = '0.1.0';
 
-  TiBasic.getOutput = function() {
-    return this.output = 'Hello, World!';
+  TiBasic.ans = 0;
+
+  TiBasic.run = function (code) {
+    this.code = code.trim();
+    this.disp('Running...')
+    // this.getInput('A?', function (input) {
+    //   TiBasic.disp(input);
+    // });
+    return '> '+ code.length;
   }
 
   return TiBasic;
